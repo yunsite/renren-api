@@ -175,6 +175,8 @@
       * @return RESTClient
       */
      public function _DELETE($url,$params=null,$username=null,$password=null) {
+		 #Modified by Edison tsai on 09:50 2010/11/26 for missing part
+		 $response = $this->call($url,'DELETE',$params,$username,$password);
 		 return $this->parseResponse($response);
      }
 
