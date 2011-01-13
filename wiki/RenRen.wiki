@@ -1,8 +1,9 @@
 #summary One-sentence summary of this page.
 
-= Introduction =
+= 介绍(Introduction) =
 
-为人人网开发的API，完全调用人人网的RESTful API。
-
-
-= Details =
+*1、完全无缝调用人人网的RESTful API；
+*2、自身封装基于cURL的RESTClient类，可实现HTTP协议中的：GET、POST、PUT、DELETE；
+*3、使用OOP写法，有利于整合到各类型系统中去；
+*4、简法的算法，完善的注释，方便开发人员进行二次开发；
+*5、可运行在Linux以及Windows等平台上；
