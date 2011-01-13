@@ -7,7 +7,9 @@
  * The requirement of PHP version is 5.2.0 or above, and support as below:
  * cURL, Libxml 2.6.0
  *
- * @Version: 0.0.1 alpha
+ * @Modified by Edison tsai on 14:41 2011/01/13 for wrap call_id & session_key in this class.
+ *
+ * @Version: 0.0.5 alpha
  * @Created: 17:09:40 2010/11/23
  * @Author:	Edison tsai<dnsing@gmail.com>
  * @Blog:	http://www.timescode.com
@@ -20,23 +22,28 @@ require_once 'config.inc.php'; #Include configure resources
  class RenRenClient extends RESTClient{
 
 	private $_config;
-	private	$_postFields= '';
-	private $_params	=	array();
+	private	$_postFields	= '';
+	private $_params		=	array();
 	private $_currentMethod;
 	private static $_sigKey = 'sig';
-	private	$_sig	= '';
-	private $_keyMapping = array(
-			'api_key'	=>	'',
-			'method'	=>	'',
-			'v'			=>	'',
-			'format'	=>	'',
-	);
+	private	$_sig			= '';
+	private $_call_id		= '';
+	private $_session_key	= '';
+	private $_keyMapping	= array(
+				'api_key'	=>	'',
+				'method'	=>	'',
+				'v'			=>	'',
+				'format'	=>	'',
+				'call_id'	=>	'',
+				'session_key'=>	'',
+			);
 	
 	public function __construct(){
+		global $config;
 		
 		parent::__construct();
 		
-		$this->_config = $GLOBALS['config'];
+		$this->_config = $config;
 		
 		if(empty($this->_config->APIURL) || empty($this->_config->APIKey) || empty($this->_config->SecretKey)){
 			throw new exception('Invalid API URL or API key or Secret key, please check config.inc.php');
@@ -54,7 +61,11 @@ require_once 'config.inc.php'; #Include configure resources
 
 		$args = func_get_args();
 		$this->_currentMethod	= trim($args[0]); #Method
-		$this->paramsMerge($args[1])->setConfigToMapping()->generateSignature();
+		$this->paramsMerge($args[1])
+			 ->getCallId()
+			 ->getSessionKey()
+			 ->setConfigToMapping()
+			 ->generateSignature();
 
 		#Invoke
 		unset($args);
@@ -73,7 +84,11 @@ require_once 'config.inc.php'; #Include configure resources
 
 		$args = func_get_args();
 		$this->_currentMethod	= trim($args[0]); #Method
-		$this->paramsMerge($args[1])->setConfigToMapping()->generateSignature();
+		$this->paramsMerge($args[1])
+			 ->getCallId()
+			 ->getSessionKey()
+			 ->setConfigToMapping()
+			 ->generateSignature();
 
 		#Invoke
 		unset($args);
@@ -92,7 +107,11 @@ require_once 'config.inc.php'; #Include configure resources
 
 		$args = func_get_args();
 		$this->_currentMethod	= trim($args[0]); #Method
-		$this->paramsMerge($args[1])->setConfigToMapping()->generateSignature();
+		$this->paramsMerge($args[1])
+			 ->getCallId()
+			 ->getSessionKey()
+			 ->setConfigToMapping()
+			 ->generateSignature();
 
 		#Invoke
 		unset($args);
@@ -111,7 +130,11 @@ require_once 'config.inc.php'; #Include configure resources
 
 		$args = func_get_args();
 		$this->_currentMethod	= trim($args[0]); #Method
-		$this->paramsMerge($args[1])->setConfigToMapping()->generateSignature();
+		$this->paramsMerge($args[1])
+			 ->getCallId()
+			 ->getSessionKey()
+			 ->setConfigToMapping()
+			 ->generateSignature();
 
 		#Invoke
 		unset($args);
@@ -149,11 +172,12 @@ require_once 'config.inc.php'; #Include configure resources
      /**
       * Parameters merge
       * @param $params Array
+	  * @modified by Edison tsai on 15:56 2011/01/13 for fix non-object bug
       * @return RenRenClient
       */
 	private function paramsMerge($params){
 
-		if(!is_array($params))return array();
+		if(!is_array($params) || count($params) < 1)return $this;
 
 		$arr1 = explode(',', $this->_config->APIMapping[$this->_currentMethod]);
 		
@@ -179,6 +203,7 @@ require_once 'config.inc.php'; #Include configure resources
 
      /**
       * Setting mapping value
+	  * @modified by Edison tsai on 15:04 2011/01/13 for add call id & session_key
       * @return RenRenClient
       */
 	private function setConfigToMapping(){
@@ -187,8 +212,70 @@ require_once 'config.inc.php'; #Include configure resources
 			$this->_keyMapping['method']	= $this->_currentMethod;
 			$this->_keyMapping['v']			= $this->_config->APIVersion;
 			$this->_keyMapping['format']	= $this->_config->decodeFormat;
+			$this->_keyMapping['call_id']	= $this->_call_id;
+			$this->_keyMapping['session_key']=$this->_session_key;
 
 		return $this;
+	}
+
+	private function setAPIURL($url){
+			$this->_config->APIURL = $url;
+	}
+
+  /**
+    * Generate call id
+	* @author Edison tsai
+	* @created 14:48 2011/01/13
+    * @return RenRenClient
+    */
+	public function getCallId(){
+		$this->_call_id = str_pad(mt_rand(1, 9999999999), 10, 0, STR_PAD_RIGHT);
+		return $this;
+	}
+
+  /**
+    * Set call id
+	* @param $call_id float or integer, default is zero '0'
+	* @author Edison tsai
+	* @created 15:06 2011/01/13
+    * @return null
+    */
+	private function setCallId($call_id=0){
+		$this->_call_id = $call_id;
+		return $this->_call_id;
+	}
+
+  /**
+    * Get session key
+	* @author Edison tsai
+	* @created 15:09 2011/01/13
+    * @return RenRenClient
+    */
+	private function getSessionKey(){
+		$this->isGotSessionKey() or $this->_session_key	= $_COOKIE[$this->_config->APIKey.'_session_key'];
+		return $this;
+	}
+
+   /**
+    * Set session key
+	* @param $session_key, String
+	* @author Edison tsai
+	* @created 15:10 2011/01/13
+    * @return RenRenClient
+    */
+	public function setSessionKey($session_key){
+		!empty($session_key) and $this->_session_key = $session_key;
+		return $this;
+	}
+
+  /**
+    * Is got session key or not?
+	* @author Edison tsai
+	* @created 15:11 2011/01/13
+    * @return boolean
+    */
+	private function isGotSessionKey(){
+		return empty($this->_session_key) ? false : true;
 	}
 
  }
