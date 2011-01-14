@@ -3,8 +3,8 @@
 
 = 介绍(Introduction) =
 
-1、完全无缝调用人人网的RESTful API；<br />
-2、自身封装基于cURL的RESTClient类，可实现HTTP协议中的：GET、POST、PUT、DELETE；<br />
+1、完全无缝地调用人人网的RESTful API；<br />
+2、自身封装基于cURL的RESTClient类，可实现HTTP协议中的：GET、POST、PUT、DELETE等事件；<br />
 3、使用OOP写法，有利于整合到各类型系统中去；<br />
-4、简法的算法，完善的注释，方便开发人员进行二次开发；<br />
+4、简洁的算法，完善的注释，方便开发人员进行二次开发；<br />
 5、可运行在Linux以及Windows等平台上；<br />
