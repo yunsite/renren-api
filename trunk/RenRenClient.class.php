@@ -225,10 +225,11 @@ require_once 'config.inc.php'; #Include configure resources
   /**
     * Generate call id
 	* @author Edison tsai
+	* @modified by zhyape for change public to private
 	* @created 14:48 2011/01/13
     * @return RenRenClient
     */
-	public function getCallId(){
+	private function getCallId(){
 		$this->_call_id = str_pad(mt_rand(1, 9999999999), 10, 0, STR_PAD_RIGHT);
 		return $this;
 	}
@@ -237,10 +238,11 @@ require_once 'config.inc.php'; #Include configure resources
     * Set call id
 	* @param $call_id float or integer, default is zero '0'
 	* @author Edison tsai
+	* @modified by zhyape for change private to public
 	* @created 15:06 2011/01/13
     * @return null
     */
-	private function setCallId($call_id=0){
+	public function setCallId($call_id=0){
 		$this->_call_id = $call_id;
 		return $this->_call_id;
 	}
