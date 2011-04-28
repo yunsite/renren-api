@@ -22,7 +22,9 @@
 
 2.2、参数是否齐全？此步很关键，需要确认是否正确配置renren-api php版的config.inc.php文件，规则如下：
 
-接口内容来自http://wiki.dev.renren.com/wiki/API，编写时请遵守以下规则：
+接口内容来自：http://wiki.dev.renren.com/wiki/API
+
+编写时请遵守以下规则：
 
 key  (键名)	: API方法名，直接Copy过来即可，请区分大小写
 
@@ -39,6 +41,7 @@ value(键值): 把所有的参数，包括required(必须)及optional(可选)，
 
 3.2、Canvas Callback，即每次正常登录，并不是首次的时候都会以Canvas Callback的方式来返回数据，服务器是以GET的方式来回传数据的，格式如下：
 
+{{{
 Array
 (
     [action] => info
@@ -55,9 +58,11 @@ Array
     [xn_sig_user_src] => rr
     [xn_sig] => ebd53a8e0d9d9c815c81d50709c01d51
 );
+}}}
 
 3.3、用户删除应用，当用删除之后，服务器会以POST的格式返回数据，格式如下：
 
+{{{
 Array
 (
     [userId] => 346132863
@@ -70,5 +75,6 @@ Array
     [xn_sig_api_key] => c656ef79f8994071aaa7efafdc189185
     [xn_sig] => 1937c7111f3228cc9bbfc2d08fcd8b4a
 );
+}}}
 
 持续更新...
